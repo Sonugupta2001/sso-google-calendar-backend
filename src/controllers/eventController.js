@@ -1,14 +1,28 @@
-const { google } = require('googleapis');
+const {google} = require('googleapis');
 
 exports.getEventsController = async (req, res) => {
   try {
-    // new OAuth2 client instance and setting up the credentials
-    const auth = new google.auth.OAuth2();
-    auth.setCredentials({ access_token: req.token });
+    const access_token = req.access_token;
+    const refresh_token = req.refresh_token;
 
-    // a new calendar instance
-    const calendar = google.calendar({ version: 'v3', auth });
-    // Fetch the events from the user's primary calendar
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      'postmessage'
+    );
+
+    oauth2Client.setCredentials({
+      access_token: access_token,
+      refresh_token: refresh_token,
+    });
+
+    const response = await oauth2Client.refreshAccessToken();
+    const new_access_token = response.credentials.access_token;
+
+    oauth2Client.setCredentials({ access_token: new_access_token });
+
+
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
     const events = await calendar.events.list({
       calendarId: 'primary',
       timeMin: new Date().toISOString(),
@@ -16,10 +30,11 @@ exports.getEventsController = async (req, res) => {
       orderBy: 'startTime',
     });
 
+
     res.status(200).json({ success: true, events: events.data.items });
   }
   catch (error) {
-    console.error('Error fetching events:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch events' });
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };

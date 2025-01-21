@@ -1,35 +1,44 @@
-const { OAuth2Client } = require('google-auth-library');
+const { google } = require('googleapis');
 
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-exports.authenticateGoogleToken = async (req, res, next) => {
-  // Get the token from the request headers
-  const authHeader = req.headers['authorization'];
-  // Check if the token exists
-  const token = authHeader && authHeader.split(' ')[1];
-
-  // If the token does not exist, return an error response
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
-  }
-
-
+exports.authenticateGoogleCode = async (req, res, next) => {
   try {
-    // Verify the token
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    const access_token = req.headers.authorization.split(' ')[1];
+    const refresh_token = req.headers['x-refresh-token'];
+
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      'postmessage'
+    );
+
+    oauth2Client.setCredentials({
+      access_token: access_token,
+      refresh_token: refresh_token,
     });
-    // Set the token in the request object
-    req.token = token;
-    // Extract the user's information and set it in the request object
-    req.user = ticket.getPayload();
+
+
+    const response = await oauth2Client.refreshAccessToken();
+    const new_access_token = response.credentials.access_token;
+    const new_id_token = response.credentials.id_token;
+
+    oauth2Client.setCredentials({ access_token: new_access_token });
+
+
+    const ticket = await oauth2Client.verifyIdToken({
+      idToken: new_id_token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+
+    req.access_token = new_access_token;
+    req.refresh_token = refresh_token;
+    req.user = payload;
 
     next();
   }
   catch (error) {
-    console.error('Invalid Google Token:', error);
-    res.status(403).json({ success: false, message: 'Invalid token' });
+    console.error(error);
+    res.status(403).json({ success: false, message: error.message });
   }
 };

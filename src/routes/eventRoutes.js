@@ -1,8 +1,7 @@
 const express = require('express');
 const { getEventsController } = require('../controllers/eventController');
-const { authenticateGoogleToken } = require('../middlewares/authMiddleware');
+const { authenticateGoogleCode } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-router.get('/api/getEvents', authenticateGoogleToken, getEventsController);
-
+router.get('/getEvents', authenticateGoogleCode, getEventsController);
 module.exports = router;
