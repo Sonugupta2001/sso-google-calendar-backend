@@ -15,6 +15,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
+app.set('trust proxy', true);
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
