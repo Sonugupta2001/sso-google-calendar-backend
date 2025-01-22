@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const { RedisStore } = require('connect-redis');
 const { createClient } = require('redis');
 const session = require('express-session');
+const serverless = require( "serverless-http");
 require('dotenv').config();
 
 const app = express();
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.set('trust proxy', true);
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://sso-google-calendar-frontend.vercel.app',
     credentials: true,
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -66,4 +67,4 @@ app.get('/', (_, res) => {
     res.json({ success: true, message: 'Welcome to the Google Calendar API' });
 });
 
-module.exports = app;
+export const handler = serverless(app);
