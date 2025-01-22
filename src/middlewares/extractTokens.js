@@ -1,13 +1,11 @@
 const { google } = require('googleapis');
 
-exports.extractTokens = async (req, res) => {
+exports.extractTokens = async (req, res, next) => {
   try {
-    const header = req.headers.authorization;
-    if (!header) {
+    const authCode = req.body.code;
+    if (!authCode) {
       return res.status(400).json({ success: false, message: 'Authorization code is required' });
     }
-
-    const authCode = header.split(' ')[1];
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
@@ -15,12 +13,13 @@ exports.extractTokens = async (req, res) => {
       'postmessage'
     );
 
-    const { tokens } = await oauth2Client.getToken({
+    const {tokens} = await oauth2Client.getToken({
       code: authCode,
       redirect_uri: 'postmessage'
     });
 
-    res.status(200).json({ success: true, tokens: tokens });
+    req.tokens = tokens;
+    next();
   }
   catch (error) {
     console.error('Error in Google Authentication:', error);
