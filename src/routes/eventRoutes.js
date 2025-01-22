@@ -8,6 +8,8 @@ router.post('/login', extractTokens, (req, res) => {
     console.log('[final stage of login route] serving the login request..');
 
     req.session.tokens = req.tokens;
+    req.session.visited = true;
+    
     res.status(200).json({ success: true, message: 'Login successful' });
 });
 
