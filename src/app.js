@@ -48,8 +48,8 @@ client.on('error', err => console.log('Redis Client Error', err));
 app.use(session({
     store: new RedisStore({ client: client }),
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
         secure: false,
         httpOnly: true,

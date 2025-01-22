@@ -6,6 +6,8 @@ exports.refreshTokens = async (req, res, next) => {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
+        console.log('session id [getEvents request]:', req.sessionID);
+
         const oauth2Client = new google.auth.OAuth2(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,
@@ -19,6 +21,10 @@ exports.refreshTokens = async (req, res, next) => {
 
         req.session.tokens = tokens.credentials;
         req.tokens = tokens;
+
+        console.log('tokens refreshed !!');
+        console.log('refreshed access_token:', tokens.credentials.access_token);
+        console.log('refreshed refresh_token:', tokens.credentials.refresh_token);
         
         next();
     }
