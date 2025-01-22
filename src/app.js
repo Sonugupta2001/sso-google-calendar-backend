@@ -7,7 +7,6 @@ const cookieParser = require('cookie-parser');
 const { RedisStore } = require('connect-redis');
 const { createClient } = require('redis');
 const session = require('express-session');
-const serverless = require( "serverless-http");
 require('dotenv').config();
 
 const app = express();
@@ -67,4 +66,4 @@ app.get('/', (_, res) => {
     res.json({ success: true, message: 'Welcome to the Google Calendar API' });
 });
 
-export const handler = serverless(app);
+module.exports = app;
