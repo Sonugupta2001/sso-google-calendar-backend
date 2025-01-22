@@ -51,9 +51,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: true,
+        secure: true, // for local development, set to false, for production set to true
         httpOnly: true,
-        sameSite: 'none',
+        sameSite: 'none', // for local development, set to 'lax' or remove it alltogether
         maxAge: 1000 * 60 * 10,
     }
 }));
