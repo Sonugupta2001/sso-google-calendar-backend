@@ -2,6 +2,8 @@ const { google } = require('googleapis');
 
 exports.refreshTokens = async (req, res, next) => {
     try {
+        console.log('session id [getEvents request]:', req.sessionID);
+        
         if (!req.session.tokens) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
