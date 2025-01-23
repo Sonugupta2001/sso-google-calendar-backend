@@ -61,14 +61,6 @@ This project integrates the Google Calendar API with a Node.js backend to provid
 6. Access the API:
    - Base URL: `http://localhost:PORT/`
    - Test endpoints using tools like Postman or curl.
-
-### Testing OAuth 2.0
-- Redirect users to the Google OAuth consent screen using the following URL:
-  ```
-  https://accounts.google.com/o/oauth2/auth?client_id=<GOOGLE_CLIENT_ID>&redirect_uri=<REDIRECT_URI>&response_type=code&scope=https://www.googleapis.com/auth/calendar.events.readonly
-  ```
-- Replace `<GOOGLE_CLIENT_ID>` and `<REDIRECT_URI>` with your credentials.
-
 ---
 
 ## Project Structure
