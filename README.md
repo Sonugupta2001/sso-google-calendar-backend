@@ -16,19 +16,22 @@ This project integrates the Google Calendar API with a Node.js backend to provid
 ### Prerequisites
 1. **Google Cloud Project**:
    - Create a project on [Google Cloud Console](https://console.cloud.google.com/).
-   - Enable the "Google Calendar API" for your project.
-   - Create OAuth 2.0 credentials and download the `credentials.json` file.
+   - Enable the "Google Calendar APIs" and "Public Profile APIs" for your google cloud project
+   - Create OAuth 2.0 credentials and download the `credentials.json` file, and note down the "Client ID" and "Client Secret".
+   - (Please set the necessary Authorized JavaScript origins and Authorized redirect URIs).
+
 2. **Redis Setup**:
    - Install Redis on your server or use a managed Redis service.
    - Note down the host, port, username, and password.
+
 3. **Node.js Environment**:
    - Install Node.js (v14 or later).
 
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone <repository_url>
-   cd <repository_name>
+   git clone https://github.com/Sonugupta2001/sso-google-calendar-backend
+   cd sso-google-calendar-backend
    ```
 2. Install dependencies:
    ```bash
@@ -44,15 +47,19 @@ This project integrates the Google Calendar API with a Node.js backend to provid
      REDIS_HOST=<your_redis_host>
      REDIS_PORT=<your_redis_port>
      SESSION_SECRET=<your_session_secret>
+     PORT=<your_port_number_for_express_app>
      ```
 4. Set up Redis:
    - Start the Redis server if hosting locally, or ensure the managed Redis service is accessible.
+   - In default the express-session uses its in-memory session store. So For local development, the redis setup can also be ignored for simplicity.
+   - (In this case, remove the 'store' field from the session parameters so the express will use it default session store).
+
 5. Run the application:
    ```bash
    npm start
    ```
 6. Access the API:
-   - Base URL: `http://localhost:3000`
+   - Base URL: `http://localhost:PORT/`
    - Test endpoints using tools like Postman or curl.
 
 ### Testing OAuth 2.0
@@ -85,7 +92,7 @@ src/
 ### **1. Login**
 - **URL**: `/api/login`
 - **Method**: `POST`
-- **Middleware**: `extractTokens`
+
 - **Request Headers**:
   - `Content-Type: application/json`
 - **Request Body**:
@@ -120,7 +127,7 @@ src/
 ### **2. Get Events**
 - **URL**: `/api/getEvents`
 - **Method**: `GET`
-- **Middleware**: `refreshTokens`
+
 - **Response**:
   - **200 OK**:
 ```json
@@ -154,6 +161,7 @@ src/
 ### **3. Logout**
 - **URL**: `/api/logout`
 - **Method**: `GET`
+
 - **Response**:
   - **200 OK**:
 ```json
@@ -222,6 +230,7 @@ REDIS_PASSWORD=<your_redis_password>
 REDIS_HOST=<your_redis_host>
 REDIS_PORT=<your_redis_port>
 SESSION_SECRET=<your_session_secret>
+PORT=<your_port_number_for_express_app>
 ```
 
 ---
@@ -239,36 +248,8 @@ SESSION_SECRET=<your_session_secret>
 
 ---
 
-## Deployment Notes
-1. Ensure that the **Google OAuth 2.0 credentials** are correctly configured in the Google Cloud Console.
-2. Use HTTPS in production to secure cookie transmission.
-3. Set appropriate CORS policies for the frontend domain.
-4. Monitor Redis performance to handle high traffic effectively.
-
----
-
-## Testing
-- **Manual Tests**:
-  1. Verify login and token extraction with valid and invalid authorization codes.
-  2. Ensure events are retrieved correctly for authenticated users.
-  3. Validate session expiration and token refreshing.
-  4. Check logout functionality clears the session.
-- **Automated Tests**:
-  - Use tools like `Mocha` or `Jest` for unit and integration testing.
-
----
-
-## Future Improvements
-1. **Dynamic Calendar Selection**: Allow users to fetch events from specific calendars.
-2. **Pagination**: Implement pagination for event retrieval to handle large datasets.
-3. **Role-Based Access Control (RBAC)**: Add roles to restrict API usage.
-4. **Error Handling Enhancements**: Improve error messages and add retry mechanisms.
-5. **Scalability**: Optimize Redis usage and add horizontal scaling to handle higher traffic volumes.
-
----
-
 ## Author
-[Your Name]
+Sonu Gupta
 
 ---
 
